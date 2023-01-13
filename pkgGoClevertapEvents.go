@@ -18,18 +18,20 @@ type ClevertapEventSender struct {
 	config   *aws.Config
 	client   eventbridge.Client
 	eventBus string
+	source   string
 }
 
-func (c *ClevertapEventSender) Initialize(config *aws.Config, eventBus string) {
+func (c *ClevertapEventSender) Initialize(config *aws.Config, eventBus string, source string) {
 	c.config = config
 	c.client = *eventbridge.NewFromConfig(*c.config)
 	c.eventBus = eventBus
+	c.source = source
 }
 
-func (c *ClevertapEventSender) SendEventToEc(ctx context.Context, data []ClevertapEventPayload, detail_type string, source string) {
+func (c *ClevertapEventSender) SendEventToEc(ctx context.Context, data []ClevertapEventPayload, detail_type string) {
 	var inputList []types.PutEventsRequestEntry
 	detail, _ := json.Marshal(data)
-	inputList = append(inputList, defineEventHash(string(detail), detail_type, source, c.eventBus))
+	inputList = append(inputList, defineEventHash(string(detail), detail_type, c.source, c.eventBus))
 	input := eventbridge.PutEventsInput{
 		Entries: inputList,
 	}
