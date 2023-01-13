@@ -28,7 +28,7 @@ func (c *ClevertapEventSender) Initialize(config *aws.Config, eventBus string, s
 	c.source = source
 }
 
-func (c *ClevertapEventSender) SendEventToEc(ctx context.Context, data []ClevertapEventPayload, detail_type string) {
+func (c *ClevertapEventSender) SendEventToEc(ctx context.Context, data ClevertapEventPayload, detail_type string) {
 	var inputList []types.PutEventsRequestEntry
 	detail, _ := json.Marshal(data)
 	inputList = append(inputList, defineEventHash(string(detail), detail_type, c.source, c.eventBus))
