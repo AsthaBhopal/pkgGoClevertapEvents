@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"time"
 
+	"encoding/json"
+
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/eventbridge"
 	"github.com/aws/aws-sdk-go-v2/service/eventbridge/types"
@@ -24,9 +26,10 @@ func (c *ClevertapEventSender) Initialize(config *aws.Config, eventBus string) {
 	c.eventBus = eventBus
 }
 
-func (c *ClevertapEventSender) SendEventToEc(ctx context.Context, detail string, detail_type string, source string) {
+func (c *ClevertapEventSender) SendEventToEc(ctx context.Context, data []ClevertapEventPayload, detail_type string, source string) {
 	var inputList []types.PutEventsRequestEntry
-	inputList = append(inputList, defineEventHash(detail, detail_type, source, c.eventBus))
+	detail, _ := json.Marshal(data)
+	inputList = append(inputList, defineEventHash(string(detail), detail_type, source, c.eventBus))
 	input := eventbridge.PutEventsInput{
 		Entries: inputList,
 	}
@@ -39,9 +42,9 @@ func defineEventHash(detail string, detail_type string, source string, eventBus 
 	curtime := (time.Now().In(loc))
 	curTimeStr := curtime.String() + source
 	return types.PutEventsRequestEntry{
-		Detail:       &detail,
-		DetailType:   &detail_type,
-		EventBusName: &eventBus,
+		Detail:       aws.String(detail),
+		DetailType:   aws.String(detail_type),
+		EventBusName: aws.String(eventBus),
 		Resources:    []string{},
 		Source:       &source,
 		Time:         &curtime,
