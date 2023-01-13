@@ -53,12 +53,12 @@ func defineEventHash(detail string, detail_type string, source string, eventBus 
 }
 
 type ClevertapEventData struct {
-	Type        string            `json:"type"`
-	EventName   string            `json:"evtName"`
-	Identity    string            `json:"identity" binding:"required"`
-	Time        int64             `json:"ts"`
-	EventData   map[string]string `json:"evtData"`
-	ProfileData map[string]string `json:"profileData"`
+	Type        string                 `json:"type"`
+	EventName   string                 `json:"evtName"`
+	Identity    string                 `json:"identity" binding:"required"`
+	Time        int64                  `json:"ts"`
+	EventData   map[string]interface{} `json:"evtData"`
+	ProfileData map[string]interface{} `json:"profileData"`
 }
 
 type ClevertapEventPayload struct {
